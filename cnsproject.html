@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Cryptography </title>
+
+<style>
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#667eea,#764ba2);
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+margin-bottom:25px;
+}
+
+select{
+width:100%;
+padding:12px;
+margin-top:15px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+margin-top:20px;
+width:100%;
+padding:14px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+iframe{
+width:100%;
+height:750px;
+border:none;
+margin-top:25px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Cryptography </h1>
+
+<select id="algo">
+<option value="">Select Algorithm</option>
+<option value="vigenere">Vigenere Cipher</option>
+<option value="row">Row Transposition Cipher</option>
+<option value="rsa">RSA Cryptography</option>
+</select>
+
+<button onclick="openAlgo()">Open Algorithm</button>
+
+<iframe id="viewer"></iframe>
+
+</div>
+
+</div>
+
+<!-- TEMPLATES -->
+
+<template id="vigenere">
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vigenere Cipher</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#e9ecef;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{
+font-size:42px;
+margin-bottom:30px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
+}
+
+label{
+font-weight:bold;
+display:block;
+margin-top:20px;
+font-size:18px;
+}
+
+textarea{
+width:100%;
+height:140px;
+padding:12px;
+margin-top:8px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+resize:none;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:8px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+margin-top:25px;
+padding:14px;
+width:100%;
+background:#2ecc71;
+border:none;
+color:white;
+font-size:18px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#27ae60;
+}
+
+.resultBox{
+background:#f8f9fa;
+border:1px solid #ddd;
+padding:12px;
+border-radius:8px;
+margin-top:8px;
+font-size:18px;
+}
+
+.explanation{
+margin-top:35px;
+}
+
+.cards{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+.cardBox{
+background:#f8f9fa;
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+width:90px;
+text-align:center;
+box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
+
+.label{
+font-size:12px;
+color:#777;
+}
+
+.value{
+font-size:20px;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Vigenere Cipher</h1>
+
+<div class="card">
+
+<label>Plaintext</label>
+<textarea id="plaintext" placeholder="Enter text"></textarea>
+
+<label>Mode</label>
+<select id="mode">
+<option value="encrypt">Encrypt</option>
+<option value="decrypt">Decrypt</option>
+</select>
+
+<label>Key</label>
+<input id="key" placeholder="Enter key">
+
+<button onclick="runCipher()">Run Cipher</button>
+
+<label>Ciphertext</label>
+<div class="resultBox" id="result"></div>
+
+<div class="explanation">
+
+<h3>Explanation</h3>
+<div class="cards" id="cards"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function runCipher(){
+
+let text=document.getElementById("plaintext").value.trim();
+let key=document.getElementById("key").value.trim();
+
+if(text===""){
+alert("Please enter plaintext.");
+return;
+}
+
+if(key===""){
+alert("Please enter key.");
+return;
+}
+
+if(!/^[a-zA-Z\s]+$/.test(text)){
+alert("Plaintext should contain only letters (A-Z).");
+return;
+}
+
+if(!/^[a-zA-Z]+$/.test(key)){
+alert("Key should contain only letters (A-Z).");
+return;
+}
+
+text=text.toUpperCase();
+key=key.toUpperCase();
+
+let mode=document.getElementById("mode").value;
+
+let result="";
+let j=0;
+
+let cardsHTML="";
+
+for(let i=0;i<text.length;i++){
+
+let char=text[i];
+
+if(char>='A' && char<='Z'){
+
+let keyChar=key[j%key.length];
+let shift=keyChar.charCodeAt(0)-65;
+
+let code;
+
+if(mode=="encrypt"){
+code=(char.charCodeAt(0)-65+shift)%26+65;
+}else{
+code=(char.charCodeAt(0)-65-shift+26)%26+65;
+}
+
+let cipherChar=String.fromCharCode(code);
+
+result+=cipherChar;
+
+cardsHTML+=`
+<div class="cardBox">
+<div class="label">Plain</div>
+<div class="value">${char}</div>
+<div class="label">Key</div>
+<div class="value">${keyChar}</div>
+<div class="label">Cipher</div>
+<div class="value">${cipherChar}</div>
+</div>
+`;
+
+j++;
+
+}else{
+result+=char;
+}
+
+}
+
+document.getElementById("result").innerText=result;
+document.getElementById("cards").innerHTML=cardsHTML;
+
+}
+
+</script>
+
+</body>
+</html>
+</template>
+
+<template id="row">
+<!DOCTYPE html>
+<html>
+<head>
+<title>Row Transposition Cipher</title>
+
+<style>
+
+body{
+font-family:Segoe UI, Arial;
+background:linear-gradient(120deg,#4f46e5,#9333ea);
+margin:0;
+padding:40px;
+color:white;
+}
+
+.container{
+max-width:950px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:35px;
+}
+
+.box{
+background:white;
+color:black;
+padding:25px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+textarea{
+width:100%;
+height:110px;
+padding:10px;
+font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+input{
+width:100%;
+padding:10px;
+font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+margin-top:10px;
+}
+
+textarea::placeholder,
+input::placeholder{
+color:#888;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:6px;
+background:#4f46e5;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#4338ca;
+}
+
+.result{
+background:#f3f4f6;
+padding:12px;
+border-radius:6px;
+margin-top:10px;
+font-size:18px;
+word-break:break-all;
+}
+
+.keyBox{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:8px;
+}
+
+.keyCell{
+background:#f3f4f6;
+border:1px solid #ccc;
+padding:6px 10px;
+border-radius:5px;
+min-width:30px;
+text-align:center;
+font-weight:bold;
+}
+
+.matrixRow{
+display:flex;
+gap:6px;
+margin-top:5px;
+}
+
+.matrixCell{
+border:1px solid #ccc;
+padding:8px 10px;
+background:#f9fafb;
+border-radius:4px;
+min-width:25px;
+text-align:center;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Row Transposition Cipher</h1>
+
+<div class="box">
+
+<h3>Input Text</h3>
+<textarea id="rtctext" placeholder="Enter text"></textarea>
+
+<h3>Key</h3>
+<input id="rtckey" placeholder="Enter key (numbers or text)">
+
+<div class="buttons">
+<button onclick="encrypt()">Encrypt</button>
+<button onclick="decrypt()">Decrypt</button>
+</div>
+
+</div>
+
+<div class="box">
+
+<h3>Result</h3>
+<div class="result" id="rtcresult"></div>
+
+</div>
+
+<div class="box">
+
+<h3>Explanation</h3>
+
+<b>Original Key</b>
+<div id="originalKey" class="keyBox"></div>
+
+<b>Sorted Key</b>
+<div id="sortedKey" class="keyBox"></div>
+
+<b>Key Order</b>
+<div id="keyOrder" class="keyBox"></div>
+
+<br>
+
+<b>Matrix</b>
+<div id="matrix"></div>
+
+</div>
+
+</div>
+
+<script>
+
+function processKey(){
+
+let key=document.getElementById("rtckey").value.toUpperCase().replace(/[^A-Z]/g,'');
+
+let letters=key.split('');
+
+let arr=letters.map((c,i)=>({c,i}));
+
+let sorted=[...arr].sort((a,b)=>{
+if(a.c<b.c) return -1;
+if(a.c>b.c) return 1;
+return a.i-b.i;
+});
+
+let order=new Array(arr.length);
+
+sorted.forEach((item,i)=>{
+order[item.i]=i+1;
+});
+
+displayKey(letters,sorted.map(x=>x.c),order);
+
+return order;
+
+}
+
+function displayKey(original,sorted,order){
+
+let o=document.getElementById("originalKey");
+let s=document.getElementById("sortedKey");
+let k=document.getElementById("keyOrder");
+
+o.innerHTML="";
+s.innerHTML="";
+k.innerHTML="";
+
+original.forEach(letter=>{
+o.innerHTML+=`<div class="keyCell">${letter}</div>`;
+});
+
+sorted.forEach(letter=>{
+s.innerHTML+=`<div class="keyCell">${letter}</div>`;
+});
+
+order.forEach(num=>{
+k.innerHTML+=`<div class="keyCell">${num}</div>`;
+});
+
+}
+
+function showMatrix(matrix){
+
+let html="";
+
+for(let r=0;r<matrix.length;r++){
+
+html+=`<div class="matrixRow">`;
+
+for(let c=0;c<matrix[r].length;c++){
+
+html+=`<div class="matrixCell">${matrix[r][c]}</div>`;
+
+}
+
+html+=`</div>`;
+
+}
+
+document.getElementById("matrix").innerHTML=html;
+
+}
+
+function encrypt(){
+
+let text=document.getElementById("rtctext").value.trim();
+let key=document.getElementById("rtckey").value.trim();
+
+if(text===""){
+alert("Please enter plaintext.");
+return;
+}
+
+if(key===""){
+alert("Please enter key.");
+return;
+}
+
+text=text.replace(/ /g,'').toUpperCase();
+
+let order=processKey();
+
+if(order.length>text.length){
+alert("Key length cannot be greater than text length.");
+return;
+}
+
+let cols=order.length;
+let rows=Math.ceil(text.length/cols);
+
+let matrix=[];
+let index=0;
+
+for(let r=0;r<rows;r++){
+
+matrix[r]=[];
+
+for(let c=0;c<cols;c++){
+
+matrix[r][c]=text[index]||'X';
+index++;
+
+}
+
+}
+
+showMatrix(matrix);
+
+let result='';
+
+for(let n=1;n<=cols;n++){
+
+let col=order.indexOf(n);
+
+for(let r=0;r<rows;r++){
+
+result+=matrix[r][col];
+
+}
+
+}
+
+document.getElementById("rtcresult").innerText=result;
+
+}
+
+function decrypt(){
+
+let text=document.getElementById("rtctext").value.trim();
+let key=document.getElementById("rtckey").value.trim();
+
+if(text===""){
+alert("Please enter ciphertext.");
+return;
+}
+
+if(key===""){
+alert("Please enter key.");
+return;
+}
+
+text=text.replace(/ /g,'').toUpperCase();
+
+let order=processKey();
+
+let cols=order.length;
+let rows=Math.ceil(text.length/cols);
+
+let matrix=Array.from({length:rows},()=>Array(cols));
+
+let index=0;
+
+for(let n=1;n<=cols;n++){
+
+let col=order.indexOf(n);
+
+for(let r=0;r<rows;r++){
+
+matrix[r][col]=text[index];
+index++;
+
+}
+
+}
+
+showMatrix(matrix);
+
+let result='';
+
+for(let r=0;r<rows;r++){
+for(let c=0;c<cols;c++){
+result+=matrix[r][c];
+}
+}
+
+document.getElementById("rtcresult").innerText=result;
+
+}
+
+</script>
+
+</body>
+</html>
+</template>
+
+<template id="rsa">
+<!DOCTYPE html>
+<html>
+<head>
+<title>RSA Cryptography</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(120deg,#2193b0,#6dd5ed);
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+.box{
+background:white;
+padding:25px;
+border-radius:10px;
+margin-bottom:25px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+.result{
+background:#f3f4f6;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+white-space:pre-line;
+}
+
+.step{
+background:#fafafa;
+padding:8px;
+margin-top:5px;
+border-radius:5px;
+border:1px solid #ddd;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>RSA Cryptography</h1>
+
+<div class="box">
+
+<h3>Step 1 : Enter Prime Numbers</h3>
+
+<input id="p" placeholder="Enter prime number p">
+<input id="q" placeholder="Enter prime number q">
+
+<button onclick="calculate()">Calculate n and φ(n)</button>
+
+<div class="result" id="values"></div>
+
+</div>
+
+<div class="box">
+
+<h3>Step 2 : Choose Public Key e</h3>
+
+<select id="e"></select>
+
+<button onclick="generateKeys()">Generate Keys</button>
+
+<div class="result" id="keys"></div>
+
+</div>
+
+<div class="box">
+
+<h3>Step 3 : Encryption / Decryption</h3>
+
+<label>Select Input Type</label>
+
+<select id="datatype">
+<option value="number">Number</option>
+<option value="text">Text</option>
+</select>
+
+<input id="message" placeholder="Enter message">
+
+<button onclick="encrypt()">Encrypt</button>
+<button onclick="decrypt()">Decrypt</button>
+
+<div class="result" id="cipher"></div>
+<div class="result" id="plain"></div>
+
+</div>
+
+<div class="box">
+
+<h3>Algorithm Explanation</h3>
+
+<div id="steps"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let p,q,n,phi,e,d;
+let cipherArray=[];
+let cipherNumber;
+
+function isPrime(num){
+
+if(num<=1) return false;
+
+for(let i=2;i<=Math.sqrt(num);i++){
+if(num%i==0) return false;
+}
+
+return true;
+
+}
+
+function gcd(a,b){
+
+while(b!=0){
+let t=b;
+b=a%b;
+a=t;
+}
+
+return a;
+
+}
+
+function modInverse(e,phi){
+
+for(let i=1;i<phi;i++){
+if((e*i)%phi==1) return i;
+}
+
+return null;
+
+}
+
+function modPow(base,exp,mod){
+
+let result=1;
+
+base%=mod;
+
+while(exp>0){
+
+if(exp%2==1) result=(result*base)%mod;
+
+base=(base*base)%mod;
+
+exp=Math.floor(exp/2);
+
+}
+
+return result;
+
+}
+
+function calculate(){
+
+p=parseInt(document.getElementById("p").value);
+q=parseInt(document.getElementById("q").value);
+
+if(isNaN(p)||isNaN(q)){
+alert("Enter p and q");
+return;
+}
+
+if(!isPrime(p)){
+alert("p must be prime");
+return;
+}
+
+if(!isPrime(q)){
+alert("q must be prime");
+return;
+}
+
+if(p==q){
+alert("p and q must be different");
+return;
+}
+
+n=p*q;
+phi=(p-1)*(q-1);
+
+document.getElementById("values").innerText =
+"n = p × q = "+n+"\nφ(n) = (p-1)(q-1) = "+phi;
+
+let select=document.getElementById("e");
+
+select.innerHTML="";
+
+for(let i=2;i<phi;i++){
+
+if(gcd(i,phi)==1){
+
+let option=document.createElement("option");
+option.value=i;
+option.text=i;
+
+select.appendChild(option);
+
+}
+
+}
+
+}
+
+function generateKeys(){
+
+e=parseInt(document.getElementById("e").value);
+
+d=modInverse(e,phi);
+
+document.getElementById("keys").innerText =
+"Public Key {e,n} = {"+e+","+n+"}\nPrivate Key {d,n} = {"+d+","+n+"}";
+
+document.getElementById("steps").innerHTML =
+
+"<div class='step'>Step 1: Choose prime numbers</div>"+
+
+"<div class='step'>p = "+p+", q = "+q+"</div>"+
+
+"<div class='step'>Step 2: n = p × q = "+n+"</div>"+
+
+"<div class='step'>Step 3: φ(n) = (p-1)(q-1) = "+phi+"</div>"+
+
+"<div class='step'>Step 4: Choose e such that gcd(e,φ(n)) = 1</div>"+
+
+"<div class='step'>Chosen e = "+e+"</div>"+
+
+"<div class='step'>Step 5: Find d</div>"+
+
+"<div class='step'>d × "+e+" mod "+phi+" = 1</div>"+
+
+"<div class='step'>d = "+d+"</div>";
+
+}
+
+function encrypt(){
+
+let type=document.getElementById("datatype").value;
+let msg=document.getElementById("message").value;
+
+if(msg==""){
+alert("Enter message");
+return;
+}
+
+if(type=="number"){
+
+let m=parseInt(msg);
+
+if(m>=n){
+alert("Number must be less than n");
+return;
+}
+
+cipherNumber=modPow(m,e,n);
+
+document.getElementById("cipher").innerText =
+"Encryption Formula:\nC = M^e mod n\n\n"+
+m+"^"+e+" mod "+n+" = "+cipherNumber;
+
+}
+
+else{
+
+cipherArray=[];
+let asciiList=[];
+let cipherList=[];
+let steps="Encryption:\nC = M^e mod n\n\n";
+
+for(let i=0;i<msg.length;i++){
+
+let ascii=msg.charCodeAt(i);
+asciiList.push(ascii);
+
+let c=modPow(ascii,e,n);
+
+cipherArray.push(c);
+cipherList.push(c);
+
+steps += ascii+"^"+e+" mod "+n+" = "+c+"\n";
+
+}
+
+document.getElementById("cipher").innerText =
+"ASCII Values: "+asciiList.join(" ")+"\n\n"+steps;
+
+}
+
+}
+
+function decrypt(){
+
+let type=document.getElementById("datatype").value;
+
+if(type=="number"){
+
+let m=modPow(cipherNumber,d,n);
+
+document.getElementById("plain").innerText =
+"Decryption Formula:\nM = C^d mod n\n\n"+
+cipherNumber+"^"+d+" mod "+n+" = "+m;
+
+}
+
+else{
+
+let result="";
+let steps="Decryption:\nM = C^d mod n\n\n";
+
+for(let i=0;i<cipherArray.length;i++){
+
+let m=modPow(cipherArray[i],d,n);
+
+steps += cipherArray[i]+"^"+d+" mod "+n+" = "+m+"\n";
+
+result+=String.fromCharCode(m);
+
+}
+
+document.getElementById("plain").innerText =
+steps+"\nDecrypted Text: "+result;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
+</template>
+
+<script>
+
+function openAlgo(){
+
+let choice=document.getElementById("algo").value;
+
+if(choice===""){
+alert("Please select an algorithm");
+return;
+}
+
+let template=document.getElementById(choice);
+
+document.getElementById("viewer").srcdoc = template.innerHTML;
+
+}
+
+</script>
+
+</body>
+</html>
